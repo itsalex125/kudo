@@ -52,4 +52,30 @@ footer{
     margin-left: 10px;
 }
 
+.all-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.recent-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.celebration-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.thank-you-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.inspiration-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+.create{
+    margin-bottom: 10px;
+}
+.search-bar{
+    width: 300px;
+}
 

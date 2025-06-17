@@ -11,12 +11,14 @@ export default function BoardList(){
             <button className='clear-button'>Clear</button>
         </div>
         <div className='category-container'>
-            <button className='button'>lorem</button>
-            <button className='button'>lorem</button>
-            <button className='button'>lorem</button>
-            <button className='button'>lorem</button>
+            <button className='all-button'>All</button>
+            <button className='recent-button'>Recent</button>
+            <button className='celebration-button'>Celebration</button>
+            <button className='thank-you-button'>Thank You</button>
+            <button className='inspiration-button'>Inspiration</button>
 
         </div>
+        <button className='create'>Create New Board</button>
         <div className="board-list-container">
             <KudoCard/>
             <KudoCard/>
