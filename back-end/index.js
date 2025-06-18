@@ -5,7 +5,10 @@ const PORT = 9009
 app.use(express.json())
 
 const boardRoutes = require(`./Routes/boards`)
-app.use(`/boards`, boardRoutes)
+app.use(`/board`, boardRoutes)
+
+const cardRoutes = require(`./Routes/cards`)
+app.use(`/card`, cardRoutes)
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`)
