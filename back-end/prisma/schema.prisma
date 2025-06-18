@@ -23,5 +23,5 @@ model Card{
   boardId   Int      @id @default(autoincrement())
   message   String
   gif       String  
-  delete    Boolean
+  isDeleted    Boolean
 }
