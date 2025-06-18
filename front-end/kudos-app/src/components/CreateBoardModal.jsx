@@ -6,7 +6,7 @@ const CreateBoardModal = ({ onClose }) => {
         title: '',
         description: '',
         category: 'celebration',
-        iamge: '',
+        image: '',
         author: ''
     });
 
@@ -24,8 +24,14 @@ const CreateBoardModal = ({ onClose }) => {
         }));
     };
 
+    const handleOverlayClick = (e) => {
+        if(e.target === e.currentTarget){
+            onClose();
+        }
+    }
+
     return(
-        <div className = "modal-overlay">
+        <div className = "modal-overlay" onClick={handleOverlayClick}>
             <div className = "modal-content">
                 <h2>Create New Board</h2>
                 <form onSubmit={handleSubmit}>
@@ -85,10 +91,10 @@ const CreateBoardModal = ({ onClose }) => {
                         ></input>
                     </div>
                     <div className="modal-actions">
-                        <button type ="button" onclick={onClose} className = "cancel-btn">
+                        <button type ="button" onClick={onClose} className = "cancel-btn">
                             Cancel
                         </button>
-                        <button type="submit" className="submit-btn">
+                        <button type="submit" className="submit-btn" onSubmit={handleSubmit}>
                             Create Board
                         </button>
                     </div>
