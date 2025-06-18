@@ -74,7 +74,7 @@ const DashBoard = () =>{
                 <div className="welcome-board">
                     <h2>Welcome to KudoBoard!</h2>
                     <p>Get started by creating your first board.</p>
-                    <button className="create first-board-btn" onClick={() => setShowCreateModal(true)}>Create Your First Board</button>
+                    <button className="create-first-board-btn" onClick={() => setShowCreateModal(true)}>Create Your First Board</button>
                 </div>
             ) : (
                 <BoardList boards = {filteredBoards} />
