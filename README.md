@@ -5,7 +5,7 @@
 
 Submitted by: **NAME**
 
-Deployed Application (**required**): [Kudos Board Deployed Site](ADD_LINK_HERE)
+Deployed Application (**required**): [Kudos Board Deployed Site](https://kudo-boards.onrender.com)
 
 ### Application Features
 
