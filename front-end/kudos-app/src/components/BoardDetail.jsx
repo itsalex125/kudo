@@ -1,0 +1,157 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getBoards, getCards, addCard, deleteCard, updateCardUpvotes } from '../utils/storage';
+
+const BoardDetail = () => {
+    const { boardId } = useParams();
+    const navigate = useNavigate();
+    const [board, setBoard] = useState(null);
+    const [cards, setCards] = useState([]);
+    const [showCardForm, setShowCardForm] = useState(false);
+    const [newCard, setNewCard] = useState({
+        title: '',
+        description: '',
+        gif: '',
+        author: ''
+    });
+    useEffect(()=>{
+        const loadData = () => {
+            const boards = getBoards();
+            const foundBoard = boards.find(b => b.id === boardId);
+            if(foundBoard){
+                setBoard(foundBoard);
+            }else{
+                navigate('/');
+            }
+            const allCards = getCards();
+            const boardCards = allCards.filter(card => card.boardId === boardId);
+            setCards(boardCards);
+        };
+
+        loadData();
+        const interval = setInterval(loadData, 1000);
+        return () => clearInterval(interval);
+    }, [boardId, navigate]);
+
+    const handlCardSubmit = (e) =>{
+        e.preventDefault();
+        addCard({
+            ...newCard,
+            boardId
+        });
+        setNewCard({
+            title: '',
+            description: '',
+            gif: '',
+            author: ''
+        });
+        setShowCardForm(false);
+    };
+
+    const handleUpvote = (cardId, currentUpvotes) => {
+        updateCardUpvotes(cardId, currentUpvotes + 1);
+    };
+
+    const handleDeleteCard = (cardId) => {
+        if(window.confirm('Do you want to delete')){
+            deleteCard(cardId);
+        }
+    };
+
+    return(
+        <div className="board-detail">
+            <header className="board-header">
+                <h1>{board.title}</h1>
+                <p>{board.description}</p>
+                <div className= "board-meta">
+                    <span className="category">{board.category}</span>
+                    {board.author && <span className="author">by {board.author}</span>}
+                </div>
+            </header>
+
+            <button className="create-card-btn" onClick={() => setShowCardForm(true)}>
+                Add New Card
+            </button>
+
+            {showCardForm && (
+                <div className="card-form-modal">
+                    <div className="modal-content">
+                        <h2>Create new Cards</h2>
+                        <form onSubmit={handlCardSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="title">Title *</label>
+                                <input 
+                                    type="text"
+                                    id = "title"
+                                    value = {newCard.title}
+                                    onChange={(e) => setNewCard({...newCard, title: e.target.value})}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="description">Description *</label>
+                                <input 
+                                    type="text"
+                                    id = "description"
+                                    value = {newCard.title}
+                                    onChange={(e) => setNewCard({...newCard, description: e.target.value})}
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label htmlFor="gif">GIF URL *</label>
+                                <input 
+                                    type="text"
+                                    id = "gif"
+                                    value = {newCard.title}
+                                    onChange={(e) => setNewCard({...newCard, gif: e.target.value})}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="author">Author (Optional)</label>
+                                <input 
+                                    type="text"
+                                    id = "author"
+                                    value = {newCard.title}
+                                    onChange={(e) => setNewCard({...newCard, author: e.target.value})}
+                                />
+                            </div>
+
+                            <div className="modal-actions">
+                                <button type = "button" onClick={()=> setShowCardForm(false)}>Cancel</button>
+                                <button type = "submit">Create Card</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            <div className="cards-grid">
+                {cards.map((card)=> (
+                    <div key={card.id} className="card">
+                        <img src={card.gif} alt={card.title} className="card-gif"></img>
+                        <div className="card-content">
+                            <h3>{card.title}</h3>
+                            <p>{card.description}</p>
+                            {card.author && <p className="author">by {card.author}</p>}
+                            <div className="card-actions">
+                                <button className="upvote-btn" onClick={()=> handleUpvote(card.id, card.upvotes)}>
+                                    👍{card.upvotes}
+                                </button>
+                                <button className="delete-btn" onClick={() => handleDeleteCard(card.id)}>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default BoardDetail;
