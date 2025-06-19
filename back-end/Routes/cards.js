@@ -12,7 +12,7 @@ router.get("/", async(req,res)=> {
 })
 
 router.post('/', async (req, res) => {
-    if (!req.body.message || !req.body.gif || req.body.isDeleted) {
+    if (!req.body.message || !req.body.gif) {
     return res.status(400).send('Image and title are required.')
     }
     const { message, gif, isDeleted } = req.body
@@ -27,13 +27,13 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/:cardId', async(req, res) => {
-    if (!req.body.message || !req.body.gif || req.body.isDeleted) {
+    if (!req.body.message || !req.body.gif) {
     return res.status(400).send('Name and date are required.')
     }
     const { cardId } = req.params
     const { message, gif, isDeleted } = req.body
-    const updatedCard = await prisma.board.update({
-        where: { id: parseInt(cardId) },
+    const updatedCard = await prisma.card.update({
+        where: { boardId: parseInt(cardId) },
         data: {
         message,
         gif,
@@ -46,7 +46,7 @@ router.put('/:cardId', async(req, res) => {
 router.delete('/:cardId', async (req, res) => {
     const { cardId } = req.params
     const deleteCard = await prisma.card.delete({
-        where: { id: parseInt(cardId) }
+        where: { boardId: parseInt(cardId) }
     })
     res.json(deleteCard)
 })
