@@ -4,51 +4,90 @@ const router = express.Router()
 
 const prisma = new PrismaClient();
 
-const cards = []
-
 router.get("/", async(req,res)=> {
-    const allCards = await prisma.card.findMany();
-    res.json(allCards);
+    try{
+        const allCards = await prisma.card.findMany({
+            include:{
+                board: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+        res.json(allCards);
+    }catch( error) {
+        res.status(500).json({ error: 'Cards could not be retrieved.'})
+    }
+})
+
+router.get("/board/:boardId", async(req,res)=> {
+    try{
+        const { boardId } = req.params;
+        const cards = await prisma.card.findMany({
+            where: { boardId: parseInt(boardId)},
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+        res.json(cards);
+    }catch( error) {
+        res.status(500).json({ error: 'Cards could not be retrieved.'})
+    }
 })
 
 router.post('/', async (req, res) => {
-    if (!req.body.message || !req.body.gif) {
-    return res.status(400).send('Image and title are required.')
-    }
-    const { message, gif, isDeleted } = req.body
-    const newCard = await prisma.card.create({
-        data: {
-        message,
-        gif,
-        isDeleted
+    try{
+        const { title, description, media, author, boardId } = req.body;
+        if (!title || !description || !media || boardId) {
+        return res.status(400).send('Title, description, media, and boardId are NEEDED!')
         }
-    })
-    res.json(newCard)
+        const newCard = await prisma.card.create({
+            data: {
+            title,
+            description,
+            media,
+            author: author || null.PrismaClient,
+            boardId: parseInt(boardId)
+            }
+        });
+        res.status(201).json(newCard)
+    } catch (error) {
+        res.status(500).json({ error: 'Card could not be posted.'})
+    }
 })
 
 router.put('/:cardId', async(req, res) => {
-    if (!req.body.message || !req.body.gif) {
-    return res.status(400).send('Name and date are required.')
+    try{
+        const { cardId } = req.params;
+        const { title, description, media, author, upvotes } = req.body;
+
+        const updateData = {};
+        if(title !== undefined) updateData.title = title;
+        if(description !== undefined) updateData.description = description;
+        if(media !== undefined) updateData.media = media;
+        if(author !== undefined) updateData.author = author;
+        if(upvotes !== undefined) updateData.upvotes = upvotes;
+
+        const updatedCard = await prisma.card.update({
+            where: { id: parseInt(cardId)},
+            data: updateData
+        });
+        res.json(updatedCard)
+    } catch (error) {
+        res.status(500).json({ error: 'Card could not be updated.'})
     }
-    const { cardId } = req.params
-    const { message, gif, isDeleted } = req.body
-    const updatedCard = await prisma.card.update({
-        where: { boardId: parseInt(cardId) },
-        data: {
-        message,
-        gif,
-        isDeleted
-        }
-    })
-    res.json(updatedCard)
 })
 
 router.delete('/:cardId', async (req, res) => {
-    const { cardId } = req.params
-    const deleteCard = await prisma.card.delete({
-        where: { boardId: parseInt(cardId) }
-    })
-    res.json(deleteCard)
+    try{
+        const { cardId } = req.params
+        const deletedCard = await prisma.card.delete({
+            where: { id: parseInt(cardId) }
+        });
+        res.json(deletedCard)
+    } catch (error){
+        res.status(500).json({ error: error.message });
+    }
 })
 
 module.exports = router 
