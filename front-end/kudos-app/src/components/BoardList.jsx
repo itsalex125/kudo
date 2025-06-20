@@ -31,7 +31,7 @@ const BoardList = ({ boards, onBoardDeleted }) => {
                             {board.author && <span className="author">by {board.author}</span>}
                         </div>
                         <div className="board-actions">
-                            <Link to={`/board.${board.id}`} className="view-btn">View Board</Link>
+                            <Link to={`/board/${board.id}`} className="view-btn">View Board</Link>
                             <button className="delete-btn" onClick={()=> handleDelete(board.id)}>
                                 Delete
                             </button>

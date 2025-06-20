@@ -16,7 +16,7 @@ const CreateBoardModal = ({ onClose, onBoardCreated }) => {
         setLoading(true);
 
         try{
-            await createBoard(formData);
+            const result = await createBoard(formData);
             if(onBoardCreated){
                 onBoardCreated();
             }else{

@@ -36,7 +36,7 @@ export const createBoard = async (boardData) => {
     }
 };
 
-export const updateBoard = async (boardData) => {
+export const updateBoard = async (boardId, boardData) => {
     try{
         const response = await fetch(`${API_BASE_URL}/board/${boardId}`, {
             method: 'PUT',

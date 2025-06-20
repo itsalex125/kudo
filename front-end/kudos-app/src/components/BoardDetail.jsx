@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchBoard, createCard, deleteCard, updateCardUpvotes } from '../utils/api';
-import { use } from 'react';
 
 const BoardDetail = () => {
     const { boardId } = useParams();
@@ -13,7 +12,7 @@ const BoardDetail = () => {
     const [newCard, setNewCard] = useState({
         title: '',
         description: '',
-        gif: '',
+        media: '',
         author: ''
     });        
     const loadData = async() => {
@@ -43,12 +42,16 @@ const BoardDetail = () => {
         try{
             await createCard({
                 ...newCard,
+                title: newCard.title,
+                description: newCard.description,
+                media: newCard.media,
+                author: newCard.author,
                 boardId: parseInt(boardId)
             });
             setNewCard({
                 title: '',
                 description: '',
-                gif: '',
+                media: '',
                 author: ''
             });        
             setShowCardForm(false);
@@ -130,7 +133,7 @@ const BoardDetail = () => {
                                 <input 
                                     type="text"
                                     id = "description"
-                                    value = {newCard.title}
+                                    value = {newCard.description}
                                     onChange={(e) => setNewCard({...newCard, description: e.target.value})}
                                     required
                                 />
@@ -141,8 +144,8 @@ const BoardDetail = () => {
                                 <input 
                                     type="text"
                                     id = "gif"
-                                    value = {newCard.title}
-                                    onChange={(e) => setNewCard({...newCard, gif: e.target.value})}
+                                    value = {newCard.media}
+                                    onChange={(e) => setNewCard({...newCard, media: e.target.value})}
                                     required
                                 />
                             </div>
@@ -152,7 +155,7 @@ const BoardDetail = () => {
                                 <input 
                                     type="text"
                                     id = "author"
-                                    value = {newCard.title}
+                                    value = {newCard.author}
                                     onChange={(e) => setNewCard({...newCard, author: e.target.value})}
                                 />
                             </div>
@@ -169,7 +172,7 @@ const BoardDetail = () => {
             <div className="cards-grid">
                 {cards.map((card)=> (
                     <div key={card.id} className="card">
-                        <img src={card.gif} alt={card.title} className="card-gif"></img>
+                        <img src={card.media} alt={card.title} className="card-gif"></img>
                         <div className="card-content">
                             <h3>{card.title}</h3>
                             <p>{card.description}</p>
