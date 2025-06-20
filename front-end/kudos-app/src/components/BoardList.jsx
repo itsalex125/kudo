@@ -1,11 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { deleteBoard } from '../utils/storage';
+import { deleteBoard } from '../utils/api';
 
-const BoardList = ({ boards }) => {
-    const handleDelete = (boardId) => {
+const BoardList = ({ boards, onBoardDeleted }) => {
+    const handleDelete = async(boardId) => {
         if(window.confirm('Do you want to delete?')){
-            deleteBoard(boardId);
+            try{
+                await deleteBoard(boardId);
+                if(onBoardDeleted){
+                    onBoardDeleted();
+                }
+            }catch (error) {
+                alert("Failed to delete board");
+            }
         }
     };
 

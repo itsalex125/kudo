@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getBoards, getCards, addCard, deleteCard, updateCardUpvotes } from '../utils/storage';
+import { fetchBoard, createCard, deleteCard, updateCardUpvotes } from '../utils/api';
+import { use } from 'react';
 
 const BoardDetail = () => {
     const { boardId } = useParams();
@@ -8,59 +9,94 @@ const BoardDetail = () => {
     const [board, setBoard] = useState(null);
     const [cards, setCards] = useState([]);
     const [showCardForm, setShowCardForm] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [newCard, setNewCard] = useState({
         title: '',
         description: '',
         gif: '',
         author: ''
-    });
-    useEffect(()=>{
-        const loadData = () => {
-            const boards = getBoards();
-            const foundBoard = boards.find(b => b.id === boardId);
-            if(foundBoard){
-                setBoard(foundBoard);
+    });        
+    const loadData = async() => {
+        try {
+            const boardData = await fetchBoard(boardId);
+            if(boardData){
+                setBoard(boardData);
+                setCards(boardData.cards || []);
             }else{
                 navigate('/');
             }
-            const allCards = getCards();
-            const boardCards = allCards.filter(card => card.boardId === boardId);
-            setCards(boardCards);
-        };
+        } catch (error){
+            navigate('/');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(()=>{
         loadData();
         const interval = setInterval(loadData, 1000);
         return () => clearInterval(interval);
     }, [boardId, navigate]);
 
-    const handlCardSubmit = (e) =>{
+    const handlCardSubmit = async(e) =>{
         e.preventDefault();
-        addCard({
-            ...newCard,
-            boardId
-        });
-        setNewCard({
-            title: '',
-            description: '',
-            gif: '',
-            author: ''
-        });
-        setShowCardForm(false);
+        try{
+            await createCard({
+                ...newCard,
+                boardId: parseInt(boardId)
+            });
+            setNewCard({
+                title: '',
+                description: '',
+                gif: '',
+                author: ''
+            });        
+            setShowCardForm(false);
+            loadData();
+        } catch (error) {
+            alert("failed to create card");
+        }
     };
 
-    const handleUpvote = (cardId, currentUpvotes) => {
-        updateCardUpvotes(cardId, currentUpvotes + 1);
+    const handleUpvote = async(cardId, currentUpvotes) => {
+        try{
+            await updateCardUpvotes(cardId, currentUpvotes + 1);
+            loadData();
+        } catch (error) {
+            alert("failed to update upvotes");
+        }
     };
 
     const handleDeleteCard = (cardId) => {
         if(window.confirm('Do you want to delete')){
-            deleteCard(cardId);
+            try{
+                deleteCard(cardId);
+                loadData();
+            }catch (error){
+                alert("failed to delete card");
+            }
         }
     };
 
+    if(loading){
+        return(
+            <div className="board-detail">
+                <div className="loading">Loading board...</div>
+            </div>
+        );
+    }
+
+    if(!board){
+        return(
+            <div className="board-detail">
+                <div className="error">Board not found</div>
+            </div>
+        );
+    }
     return(
         <div className="board-detail">
             <header className="board-header">
+                <button className="back-btn" onClick={()=> navigate('/')}>Back to Dashboard</button>
                 <h1>{board.title}</h1>
                 <p>{board.description}</p>
                 <div className= "board-meta">
