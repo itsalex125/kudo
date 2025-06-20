@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import { addBoard } from '../utils/storage';
+import { createBoard } from '../utils/api';
 
-const CreateBoardModal = ({ onClose }) => {
+const CreateBoardModal = ({ onClose, onBoardCreated }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -9,11 +9,24 @@ const CreateBoardModal = ({ onClose }) => {
         image: '',
         author: ''
     });
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        addBoard(formData);
-        onClose();
+        setLoading(true);
+
+        try{
+            await createBoard(formData);
+            if(onBoardCreated){
+                onBoardCreated();
+            }else{
+                onClose();
+            }
+        }catch (error){
+            alert('Failed to create the Board')
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -91,11 +104,11 @@ const CreateBoardModal = ({ onClose }) => {
                         ></input>
                     </div>
                     <div className="modal-actions">
-                        <button type ="button" onClick={onClose} className = "cancel-btn">
+                        <button type ="button" onClick={onClose} className = "cancel-btn" disabled={loading}>
                             Cancel
                         </button>
-                        <button type="submit" className="submit-btn" onSubmit={handleSubmit}>
-                            Create Board
+                        <button type="submit" className="submit-btn" disabled={loading}>
+                            {loading ? "Creating..." : "Create Board"}
                         </button>
                     </div>
                 </form>

@@ -1,22 +1,23 @@
 import React, { useEffect, useState} from 'react';
 import BoardList from './BoardList';
 import CreateBoardModal from './CreateBoardModal';
-import { getBoards } from '../utils/storage';
+import { fetchBoards } from '../utils/api';
 
-const DashBoard = () =>{
+const Dashboard = () =>{
     const [boards, setBoards] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const loadBoards = () => {
-            const boardsData = getBoards();
+    const loadBoards = async () => {
+            const boardsData = await fetchBoards();
             setBoards(boardsData);
-        };
-
+            setLoading(false);
+    }
+    useEffect(() => {
         loadBoards();
-        const interval = setInterval(loadBoards, 1000);
+        const interval = setInterval(loadBoards, 2000);
         return () => clearInterval(interval);
     }, []);
 
@@ -26,6 +27,19 @@ const DashBoard = () =>{
                             board.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
+
+    const handleBoardCreated = () => {
+        setShowCreateModal(false);
+        loadBoards();
+    };
+
+    if(loading){
+        return(
+            <div className= "dashboard">
+                <div className="loading">Loading boards...</div>
+            </div>
+        );
+    }
 
     return(
         <div className = "dashboard">
@@ -77,13 +91,13 @@ const DashBoard = () =>{
                     <button className="create-first-board-btn" onClick={() => setShowCreateModal(true)}>Create Your First Board</button>
                 </div>
             ) : (
-                <BoardList boards = {filteredBoards} />
+                <BoardList boards = {filteredBoards} onBoardDeleted={loadBoards}/>
             )}
             {showCreateModal && (
-                <CreateBoardModal onClose={() => setShowCreateModal(false)} />
+                <CreateBoardModal onClose={() => setShowCreateModal(false)} onBoardCreated={handleBoardCreated}/>
             )}
         </div>
     );
 };
 
-export default DashBoard;
+export default Dashboard;
