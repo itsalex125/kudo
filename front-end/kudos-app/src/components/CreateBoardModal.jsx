@@ -14,11 +14,19 @@ const CreateBoardModal = ({ onClose, onBoardCreated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(e);
+        setFormData({
+        title: '',
+        description: '',
+        category: 'celebration',
+        image: '',
+        author: ''
+        });
         setLoading(true);
 
         try{
             if(onBoardCreated){
-                onBoardCreated();
+                onBoardCreated(formData);
             }else{
                 onClose();
             }

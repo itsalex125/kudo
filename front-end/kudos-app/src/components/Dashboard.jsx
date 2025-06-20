@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import BoardList from './BoardList';
 import CreateBoardModal from './CreateBoardModal';
-import { fetchBoards } from '../utils/api';
+import { fetchBoards, createBoard} from '../utils/api';
 
 const Dashboard = () =>{
     const [boards, setBoards] = useState([]);
@@ -18,7 +18,7 @@ const Dashboard = () =>{
     }
     useEffect(() => {
         loadBoards();
-        const interval = setInterval(loadBoards, 2000);
+        const interval = setInterval(loadBoards, 1000);
         return () => clearInterval(interval);
     }, []);
 
@@ -31,9 +31,10 @@ const Dashboard = () =>{
         return new Date(b.createdAt) - new Date(a.createdAt);
     }).slice(0, selectedCategory === 'recent' ? 6 : boards.length);
 
-    const handleBoardCreated = () => {
+    const handleBoardCreated = (formData) => {
         setShowCreateModal(false);
-        loadBoards();
+        createBoard(formData);
+        console.log("Checking #2");
     };
 
     const handleSearch = () => {
