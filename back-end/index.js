@@ -1,9 +1,12 @@
 const express = require('express')
-const cors = require('cors')
+const cors = require('cors');
 const app = express()
 const PORT = 5432
 
-app.use(cors())
+app.use(cors( {
+    origin: "*",
+    methods: "GET,PUT,POST,DELETE"
+}))
 app.use(express.json())
 
 const boardRoutes = require(`./Routes/boards`)
