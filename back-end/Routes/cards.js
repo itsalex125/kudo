@@ -38,7 +38,7 @@ router.get("/board/:boardId", async(req,res)=> {
 router.post('/', async (req, res) => {
     try{
         const { title, description, media, author, boardId } = req.body;
-        if (!title || !description || !media || boardId) {
+        if (!title || !description || !media || !boardId) {
         return res.status(400).send('Title, description, media, and boardId are NEEDED!')
         }
         const newCard = await prisma.card.create({
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
             title,
             description,
             media,
-            author: author || null.PrismaClient,
+            author: author || null,
             boardId: parseInt(boardId)
             }
         });

@@ -113,7 +113,11 @@ const BoardDetail = () => {
             </button>
 
             {showCardForm && (
-                <div className="card-form-modal">
+                <div className="modal-overlay" onClick={(e)=>{
+                    if(e.target == e.currentTarget){
+                        setShowCardForm(false);
+                    }
+                    }}>
                     <div className="modal-content">
                         <h2>Create new Cards</h2>
                         <form onSubmit={handlCardSubmit}>

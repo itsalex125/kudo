@@ -74,6 +74,7 @@ router.put('/:boardId', async(req, res) => {
             return res.status(400).json({error: 'Title, description, category, and image NEEDED!'})
         }
         const updatedBoard = await prisma.board.update({
+            where: {id: parseInt(boardId)},
             data: {
                 title, 
                 description,

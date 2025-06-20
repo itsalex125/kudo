@@ -8,6 +8,7 @@ const Dashboard = () =>{
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [loading, setLoading] = useState(true);
 
     const loadBoards = async () => {
@@ -22,15 +23,26 @@ const Dashboard = () =>{
     }, []);
 
     const filteredBoards = boards.filter( board => {
-        const matchesCategory = selectedCategory === 'all' || board.category === selectedCategory;
+        const matchesCategory = selectedCategory === 'all' ||selectedCategory === 'recent' || board.category === selectedCategory;
         const matchesSearch = board.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             board.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
-    });
+    }).sort((a,b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    }).slice(0, selectedCategory === 'recent' ? 6 : boards.length);
 
     const handleBoardCreated = () => {
         setShowCreateModal(false);
         loadBoards();
+    };
+
+    const handleSearch = () => {
+        setSearchQuery(searchInput);
+    };
+
+    const handleClear = () => {
+        setSearchInput('');
+        setSearchQuery('');
     };
 
     if(loading){
@@ -44,18 +56,22 @@ const Dashboard = () =>{
     return(
         <div className = "dashboard">
             <header className="dashboard-header">
-                <h1>KudoBoard</h1>
+                <h1>KUDOBOARD</h1>
                 <button className="create-board-btn" onClick={() => setShowCreateModal(true)}>
                     Create New Board
                 </button>
             </header>
+            <div className="search-bar">
+                    <input 
+                        type="text"
+                        placeholder="Search boards..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="search-input"></input>
+                    <button onClick={handleSearch} className="search-btn">Search</button>
+                    <button onClick={handleClear} className="clear-btn">Clear</button>
+                </div>
             <div className="filters">
-                <input 
-                    type="text"
-                    placeholder="Search boards..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-input"></input>
                 <div className="category-filters">
                     <button
                         className = {selectedCategory === 'all' ? 'active' : ''}
