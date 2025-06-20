@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://kudo-k39y.onrender.co';
+const API_BASE_URL = 'https://kudo-k39y.onrender.com';
 
 export const fetchBoards = async () => {
     try{
