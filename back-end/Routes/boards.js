@@ -2,52 +2,103 @@ const express = require('express')
 const { PrismaClient } = require('@prisma/client');
 const router = express.Router()
 
-
 const prisma = new PrismaClient();
 
-const boards = []
-
 router.get("/", async(req,res)=> {
-    const allBoards = await prisma.board.findMany();
-    res.json(allBoards);
+    try{
+        const allBoards = await prisma.board.findMany({
+            include: {
+                cards: true
+            },
+            orderBy:{
+                createdAt: 'desc'
+            }
+        });
+        res.json(allBoards);
+    }catch(error){
+        res.status(500). json({error: "Could not load in Boards"});
+    }
+})
+
+router.get("/:boardId", async(req,res)=> {
+    try{
+        const {boardId} = req.params;
+        const board = await prisma.board.findUnique({
+            where: { id: parseInt(boardId)},
+            include: {
+                cards: {
+                    orderBy:{
+                        createdAt: 'desc'
+                    }
+                }
+            }
+        });
+        if(!board){
+            return res.status(404).json({ error: 'Board not found'});
+        }
+        res.json(board)
+    }catch(error){
+        res.status(500). json({error: "Could not load in Boards"});
+    }
 })
 
 router.post('/', async (req, res) => {
-    if (!req.body.image || !req.body.title) {
-    return res.status(400).send('Image and title are required.')
-    }
-    const { image, title } = req.body
-    const newBoard = await prisma.board.create({
-        data: {
-        image,
-        title
+    try{
+        const { title, description, category, image, author } = req.body;
+
+        if(!title|| !description || !category || !image ){
+            return res.status(400).json({error: 'Title, description, category, and image NEEDED!'})
         }
-    })
-    res.json(newBoard)
+        const newBoard = await prisma.board.create({
+            data: {
+                title, 
+                description,
+                category,
+                image,
+                author: author || null
+            }
+        });
+
+        res.status(201).json(newBoard);
+    } catch (error) {
+        res.status(500).json({error: 'New board could not be created'});
+    }
 })
 
 router.put('/:boardId', async(req, res) => {
-    if (!req.body.image || !req.body.title) {
-    return res.status(400).send('Name and date are required.')
-    }
-    const { boardId } = req.params
-    const { image, title } = req.body
-    const updatedBoard = await prisma.board.update({
-        where: { id: parseInt(boardId) },
-        data: {
-        image,
-        title
+    try{
+        const{ boardId } = req.params;
+        const { title, description, category, image, author } = req.body;
+
+        if(!title|| !description || !category || !image ){
+            return res.status(400).json({error: 'Title, description, category, and image NEEDED!'})
         }
-    })
-    res.json(updatedBoard)
+        const updatedBoard = await prisma.board.update({
+            data: {
+                title, 
+                description,
+                category,
+                image,
+                author: author || null
+            }
+        });
+
+        res.json(updatedBoard);
+    } catch (error) {
+        res.status(500).json({error: 'Board could not be updated'});
+    }
 })
 
 router.delete('/:boardId', async (req, res) => {
-    const { boardId } = req.params
-    const deletedBoard = await prisma.board.delete({
-        where: { id: parseInt(boardId) }
-    })
-    res.json(deletedBoard)
+    try{
+        const { boardId } = req.params
+        const deletedBoard = await prisma.board.delete({
+            where: { id: parseInt(boardId) }
+        });
+        res.json(deletedBoard)
+    } catch (error){
+        res.status(500).json({ error: error.message });
+    }
 })
 
 module.exports = router 
