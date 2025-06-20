@@ -6,6 +6,7 @@ export const fetchBoards = async () => {
         if (!response.ok) throw new Error('Failed to fetch the boards');
         return await response.json();
     } catch (error){
+        console.log(error);
         return [];
     }
 };
