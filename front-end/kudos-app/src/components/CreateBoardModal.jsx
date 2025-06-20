@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { createBoard } from '../utils/api';
+import GiphySearch from './GiphySearch';
 
 const CreateBoardModal = ({ onClose, onBoardCreated }) => {
     const [formData, setFormData] = useState({
@@ -10,13 +10,13 @@ const CreateBoardModal = ({ onClose, onBoardCreated }) => {
         author: ''
     });
     const [loading, setLoading] = useState(false);
+    const [showGiphySearch, setShowGiphySearch] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try{
-            const result = await createBoard(formData);
             if(onBoardCreated){
                 onBoardCreated();
             }else{
@@ -36,6 +36,11 @@ const CreateBoardModal = ({ onClose, onBoardCreated }) => {
             [name]: value
         }));
     };
+
+    const handleGifSelect = (gifUrl) => {
+        setFormData(prev => ({...prev, image: gifUrl}));
+        setShowGiphySearch(false);
+    }
 
     const handleOverlayClick = (e) => {
         if(e.target === e.currentTarget){
@@ -83,15 +88,27 @@ const CreateBoardModal = ({ onClose, onBoardCreated }) => {
                             </select>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="image">Image URL *</label>
-                        <input 
-                            type="url"
-                            id="image"
-                            name = "image"
-                            value={formData.image}
-                            onChange={handleChange}
-                            required>
-                        </input>
+                    
+                           <label htmlFor="gif">GIF URL *</label>
+                                <div className= "gif-input-group">                                
+                                <input 
+                                    type="text"
+                                    id = "gif"
+                                    value = {formData.image}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder='Enter GIF URL or search for one below'
+                                />
+                                <button 
+                                    type='button'
+                                    className='search-gif-btn'
+                                    onClick={() => setShowGiphySearch(!showGiphySearch)}>
+                                        Search GIFs
+                                    </button>
+                                </div>
+                                {showGiphySearch && (
+                                    <GiphySearch onGifSelect={handleGifSelect}/>
+                                )}
                     </div>
                     <div className="modal-actions">
                         <label htmlFor="author">Author (Optional)</label>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchBoard, createCard, deleteCard, updateCardUpvotes } from '../utils/api';
+import GiphySearch from './GiphySearch';
 
 const BoardDetail = () => {
     const { boardId } = useParams();
@@ -8,6 +9,7 @@ const BoardDetail = () => {
     const [board, setBoard] = useState(null);
     const [cards, setCards] = useState([]);
     const [showCardForm, setShowCardForm] = useState(false);
+    const [showGiphySearch, setShowGiphySearch] = useState(false);
     const [loading, setLoading] = useState(true);
     const [newCard, setNewCard] = useState({
         title: '',
@@ -81,6 +83,11 @@ const BoardDetail = () => {
         }
     };
 
+    const handleGifSelect = (gifUrl) =>{
+        setNewCard({...newCard, media: gifUrl});
+        setShowGiphySearch(false);
+    }
+
     if(loading){
         return(
             <div className="board-detail">
@@ -145,13 +152,25 @@ const BoardDetail = () => {
                             
                             <div className="form-group">
                                 <label htmlFor="gif">GIF URL *</label>
+                                <div className= "gif-input-group">                                
                                 <input 
                                     type="text"
                                     id = "gif"
                                     value = {newCard.media}
                                     onChange={(e) => setNewCard({...newCard, media: e.target.value})}
                                     required
+                                    placeholder='Enter GIF URL or search for one below'
                                 />
+                                <button 
+                                    type='button'
+                                    className='search-gif-btn'
+                                    onClick={() => setShowGiphySearch(!showGiphySearch)}>
+                                        Search GIFs
+                                    </button>
+                                </div>
+                                {showGiphySearch && (
+                                    <GiphySearch onGifSelect={handleGifSelect}/>
+                                )}
                             </div>
 
                             <div className="form-group">
@@ -193,6 +212,7 @@ const BoardDetail = () => {
                     </div>
                 ))}
             </div>
+            <footer>©️KUDOBOARD 2025 ARP</footer>
         </div>
     );
 };

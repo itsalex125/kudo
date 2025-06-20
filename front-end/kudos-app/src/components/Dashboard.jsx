@@ -112,6 +112,7 @@ const Dashboard = () =>{
             {showCreateModal && (
                 <CreateBoardModal onClose={() => setShowCreateModal(false)} onBoardCreated={handleBoardCreated}/>
             )}
+            <footer>©️KUDOBOARD 2025 ARP</footer>
         </div>
     );
 };

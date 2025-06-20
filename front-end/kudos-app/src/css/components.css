@@ -15,6 +15,17 @@
     border-radius: 8px;
 }
 
+footer{
+    margin-top: 20px;
+    position: relative;
+    bottom: 0;
+    text-align:center;
+    padding: 16px;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+}
+
 .create-board-btn{
     padding: 0.75rem 1.5rem;
     border: 1px solid black;
@@ -384,6 +395,94 @@
     font-size: 1.1rem;
     margin: 0;
 }
+
+.gif-input-group{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.gif-input-group input{
+    flex: 1;
+}
+
+.search-gif-btn{
+    padding: 0.75rem 1rem;
+    border: 1px solid black;
+    border-radius: 4px;
+    color: black;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.search-gif-btn:hover{
+    background-color: lightgrey;
+    color: black;
+}
+
+.giphy-search{
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.giphy-search-form{
+    margin-bottom: 1rem;
+}
+
+.giphy-search-input{
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.giphy-search-btn{
+    padding: 0.75rem 1rem;
+    border: 1px solid black;
+    border-radius: 4px;
+    color: black;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.giphy-search-btn:hover{
+    background-color: lightgrey;
+    color: black;
+}
+
+.giphy-result h4{
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1rem;
+}
+
+.giphy-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.giphy-item{
+    cursor:pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    border: 2px transparent;
+}
+
+.giphy-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+    display: block
+}
+
 @media(max-width: 768px){
     .dashboard{
         padding: 1rem;
@@ -403,6 +502,22 @@
     }
     .cards-grid{
         grid-template-columns: 1fr;
+    }
+    .gif-input-group{
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-input-group{
+        flex-direction: column;
+    }
+
+    .giphy-grid{
+        grid-template-columns: repeat(autofill, minmax(100px, 1fr));
+        gap: 0.25rem;
+    }
+
+    .giphy-thumbnail{
+        height: 88px;
     }
 }
 
